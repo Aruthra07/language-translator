@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Language Translator</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: url('https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzNjUyOXwwfDF8c2VhcmNofDF8fGNvc21vcyUyMGJhY2tncm91bmR8ZW58MHx8fHwxNjYyMjY0NzY0&ixlib=rb-1.2.1&q=80&w=1080') no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s;
+        }
+
+        .container:hover {
+            transform: scale(1.02);
+        }
+
+        h1 {
+            text-align: center;
+            color: #6a0dad; /* Lilac color */
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+            padding: 15px;
+            border: 1px solid #6a0dad;
+            border-radius: 5px;
+            resize: none;
+            font-size: 16px;
+            transition: border-color 0.3s;
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+
+        textarea:focus {
+            border-color: #ffcc00;
+            outline: none;
+        }
+
+        .language-select {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        select {
+            padding: 10px;
+            border: 1px solid #6a0dad;
+            border-radius: 5px;
+            flex: 1;
+            margin: 0 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+
+        select:focus {
+            border-color: #ffcc00;
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background-color: #6a0dad; /* Lilac color */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.3s, transform 0.3s;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #5a0a9a; /* Darker lilac */
+            transform: translateY(-2px);
+        }
+
+        .output {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #6a0dad;
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.9);
+            font-size: 16px;
+            min-height: 50px;
+            transition: background-color 0.3s;
+        }
+
+        .output:hover {
+            background-color: rgba(255, 255, 255, 1);
+        }
+
+        .icon {
+            display: block;
+            margin: 20px auto;
+            width: 50px;
+            height: 50px;
+        }
+    </style>
+</head>
+<footer style="text-align: center; margin-top: 40px;">
+    <span id="digitalSignature">✨ Created by Aruthra ✨</span>
+    <style>
+        @keyframes glowFade {
+            0%   { opacity: 0; transform: scale(0.9); }
+            50%  { opacity: 1; transform: scale(1.05); color: #ff66cc; }
+            100% { transform: scale(1); color: #6a0dad; }
+        }
+
+        #digitalSignature {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #6a0dad;
+            display: inline-block;
+            animation: glowFade 2s ease-in-out;
+            transition: all 0.3s ease;
+        }
+
+        #digitalSignature:hover {
+            color: #ff69b4;
+            text-shadow: 0 0 10px #ffccff;
+        }
+    </style>
+</footer>
+
+<body>
+    <div class="container">
+        <h1>Language Translator</h1>
+        <img src="https://img.icons8.com/ios-filled/50/ffffff/microphone.png" alt="Microphone Icon" class="icon"/>
+        <textarea id="textInput" placeholder="Enter text here..."></textarea>
+        <div class="language-select">
+            <select id="fromLang">
+                <option value="en">English</option>
+                <option value="es">Spanish</option>
+                <option value="fr">French</option>
+                <option value="de">German</option>
+                <option value="it">Italian</option>
+                <option value="ta">Tamil</option> <!-- Added Tamil -->
+            </select>
+            <span style="color: #6a0dad; font-weight: bold;">to</span>
+            <select id="toLang">
+                <option value="fr">French</option>
+                <option value="es">Spanish</option>
+                <option value="de">German</option>
+                <option value="en">English</option>
+                <option value="it">Italian</option>
+                <option value="ta">Tamil</option> <!-- Added Tamil -->
+            </select>
+        </div>
+        <button onclick="translateText()">Translate</button>
+        <div id="output" class="output"></div>
+    </div>
+    <script>
+        function translateText() {
+            const text = document.getElementById("textInput").value;
+            const from = document.getElementById("fromLang").value;
+            const to = document.getElementById("toLang").value;
+
+            if (!text) {
+                document.getElementById("output").innerText = "Please enter text to translate.";
+                return;
+            }
+
+            // Construct the URL for the Google Translate API
+            const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${from}&tl=${to}&dt=t&q=${encodeURIComponent(text)}`;
+
+            // Fetch the translation
+            fetch(url)
+                .then(res => res.json())
+                .then(data => {
+                    if (data[0] && data[0][0] && data[0][0][0]) {
+                        document.getElementById("output").innerText = data[0][0][0];
+                    } else {
+                        document.getElementById("output").innerText = "Translation error.";
+                    }
+                })
+                .catch(error => {
+                    document.getElementById("output").innerText = "Error: " + error.message;
+                });
+        }
+    </script>
+</body>
+</html>
